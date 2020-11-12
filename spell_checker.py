@@ -62,14 +62,21 @@ def damerau_levenshtein_sim(seq1, seq2):
     sim=(len_1+len_2-damerau_levenshtein_distance(seq1, seq2))/(len_1+len_2)
     return sim
 
+
 from difflib import SequenceMatcher
-class spell_checker():
-    def __init__(self,create_dict=False):
-        self.file_db=r'C:\Users\shreyas.shandilya\Desktop\KPI_db_updated.csv'
-        self.file_dict_wrds_pkl=r'C:\Users\shreyas.shandilya\Desktop\dictionary_words.pickle'
-        self.data=pd.read_csv(self.file_db)
-        self.create_dictionary()
-               
+
+
+class SpellChecker():
+    def __init__(self,create_dict=False, standard_use = True):
+        self.file_dict_wrds_pkl='dictionary_words.pickle'
+        self.flag = standard_use
+        if not standard_use:
+            self.file_db=r'C:\Users\shreyas.shandilya\Desktop\KPI_db_updated.csv'
+            self.data=pd.read_csv(self.file_db)
+            self.create_dictionary()
+        else:
+            self.rec_dictionary()        
+       
     def create_dictionary(self):
         #Create a dictionary of words from the training corpus and words used in the database
         self.dictionary_db=pd.Series(list(self.data.columns)[1:8])
@@ -84,6 +91,7 @@ class spell_checker():
     def rec_dictionary(self):
         px=open(self.file_dict_wrds_pkl,'rb')
         self.dictionary=list(pickle.load(px))
+        self.dictionary_db = pd.Series()
         px.close()
         
     def _words_(self,text): 
